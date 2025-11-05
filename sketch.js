@@ -1,14 +1,12 @@
 // 소문자 (아두이노와 동일하게 입력)
 const SERVICE_UUID = "19b10000-e8f2-537e-4f6c-d104768a1214"; 
 const WRITE_UUID = "19b10001-e8f2-537e-4f6c-d104768a1214"; 
-let writeChar, statusP, connectBtn, send1Btn, send2Btn, send3Btn;
-let circleColor; // 원의 색상 저장
+let writeChar, statusP, connectBtn;
+let send1Btn, send2Btn, send3Btn;
+let circleColor = [255, 255, 255]; // 기본 색상 (흰색)
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-
-  // 원 색상 초기화 (기본값: 빨간색)
-  circleColor = [255, 0, 0];
 
   // BLE 연결
   connectBtn = createButton("Scan & Connect");
@@ -21,34 +19,27 @@ function setup() {
 
   // SEND 버튼들 추가
   send1Btn = createButton("SEND1");
-  send1Btn.mousePressed(() => {
-    circleColor = [255, 0, 0]; // 빨간색
-    sendNumber(1);
-  });
-  send1Btn.size(100, 40);
+  send1Btn.mousePressed(() => handleButtonClick(1, [255, 0, 0])); // 빨간색
+  send1Btn.size(100, 30);
   send1Btn.position(20, 100);
 
   send2Btn = createButton("SEND2");
-  send2Btn.mousePressed(() => {
-    circleColor = [0, 255, 0]; // 초록색
-    sendNumber(2);
-  });
-  send2Btn.size(100, 40);
+  send2Btn.mousePressed(() => handleButtonClick(2, [0, 255, 0])); // 초록색
+  send2Btn.size(100, 30);
   send2Btn.position(130, 100);
 
   send3Btn = createButton("SEND3");
-  send3Btn.mousePressed(() => {
-    circleColor = [0, 0, 255]; // 파란색
-    sendNumber(3);
-  });
-  send3Btn.size(100, 40);
+  send3Btn.mousePressed(() => handleButtonClick(3, [0, 0, 255])); // 파란색
+  send3Btn.size(100, 30);
   send3Btn.position(240, 100);
 }
 
 function draw() {
-  background(220); // 배경색 설정
+  background(220);
+  // 원 그리기 (화면 중앙)
   fill(circleColor[0], circleColor[1], circleColor[2]);
-  circle(width/2, height/2, 300);
+  noStroke();
+  circle(width / 2, height / 2, 200);
 }
 
 // ---- BLE Connect ----
@@ -80,4 +71,12 @@ async function sendNumber(n) {
   } catch (e) {
     statusP.html("Status: Write error - " + e);
   }
+}
+
+// ---- 버튼 클릭 핸들러 ----
+async function handleButtonClick(number, color) {
+  // 블루투스로 숫자 전송
+  await sendNumber(number);
+  // 원 색상 변경
+  circleColor = color;
 }
